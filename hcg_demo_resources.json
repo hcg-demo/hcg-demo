@@ -1,0 +1,78 @@
+{
+  "project": "HCG_Demo",
+  "account_id": "026138522123",
+  "region": "ap-southeast-1",
+  "deployment_date": "2025",
+  
+  "networking": {
+    "vpc_id": "vpc-0382b710049feecd6",
+    "vpc_cidr": "10.0.0.0/16",
+    "subnets": {
+      "public_1a": "subnet-02338c1ad0d2ff75c",
+      "public_1b": "subnet-0db72c80e869b280d",
+      "private_1a": "subnet-0efcb011cff665fa4",
+      "private_1b": "subnet-00b9791ab8c06b9ec"
+    },
+    "nat_gateway": "nat-01b8dfbb36ae3f811",
+    "internet_gateway": "igw-0bc65b8460df32470",
+    "security_group_lambda": "sg-011444af21409ac22"
+  },
+  
+  "iam": {
+    "roles": {
+      "lambda_exec": "hcg-demo-lambda-exec",
+      "lambda_bedrock": "hcg-demo-lambda-bedrock",
+      "stepfunctions": "hcg-demo-stepfunctions",
+      "bedrock_agent": "hcg-demo-bedrock-agent"
+    }
+  },
+  
+  "secrets": {
+    "slack": "hcg-demo/slack/credentials",
+    "servicenow": "hcg-demo/servicenow/oauth"
+  },
+  
+  "api_gateway": {
+    "api_id": "arep4vvhlc",
+    "api_url": "https://arep4vvhlc.execute-api.ap-southeast-1.amazonaws.com/prod",
+    "webhook_url": "https://arep4vvhlc.execute-api.ap-southeast-1.amazonaws.com/prod/slack/events",
+    "authorizer_id": "3kf3gf"
+  },
+  
+  "lambda": {
+    "authorizer": "hcg-demo-authorizer",
+    "webhook_handler": "hcg-demo-webhook-handler"
+  },
+  
+  "dynamodb": {
+    "sessions": "hcg-demo-sessions",
+    "users": "hcg-demo-users",
+    "feedback": "hcg-demo-feedback"
+  },
+  
+  "s3": {
+    "knowledge": "hcg-demo-knowledge-026138522123",
+    "logs": "hcg-demo-logs-026138522123",
+    "cloudtrail": "hcg-demo-cloudtrail-026138522123"
+  },
+  
+  "cognito": {
+    "user_pool_id": "ap-southeast-1_ONwFGintc"
+  },
+  
+  "opensearch": {
+    "collection_id": "y3f4j35z37u9awc6sqkc",
+    "collection_name": "hcg-demo-knowledge"
+  },
+  
+  "cloudwatch": {
+    "log_groups": [
+      "/aws/lambda/hcg-demo-webhook-handler",
+      "/aws/lambda/hcg-demo-authorizer",
+      "/aws/lambda/hcg-demo-agent-orchestrator",
+      "/aws/apigateway/hcg-demo-api",
+      "/hcg-demo/application"
+    ],
+    "cloudtrail": "hcg-demo-audit-trail"
+  }
+}
