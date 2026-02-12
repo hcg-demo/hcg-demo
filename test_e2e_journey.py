@@ -173,40 +173,44 @@ def test_end_to_end_journey():
         
         result = json.loads(response['Payload'].read())
         
-        if result.get('statusCode') == 200:
-            body = json.loads(result['body'])
-            incident_number = body.get('incident_number', 'INC0012345')
-            incident_sys_id = body.get('sys_id', 'mock-sys-id')
-            
-            print(f"✅ Incident created successfully")
-            print(f"\n  Incident Number: {incident_number}")
-            print(f"  Status: Open")
-            print(f"  Priority: Medium")
-            print(f"  Link: https://company.service-now.com/nav_to.do?uri=incident.do?sys_id={incident_sys_id}")
-            
-            step3_time = time.time() - step3_start
-            results['steps'].append({
-                'step': 3,
-                'name': 'Create ServiceNow Ticket',
-                'status': 'success',
-                'time': round(step3_time, 2),
-                'details': {
-                    'incident_number': incident_number,
-                    'sys_id': incident_sys_id,
-                    'category': 'Network'
-                }
-            })
-            
-            print(f"\n✅ Step 3 completed in {step3_time:.2f}s")
-        else:
-            print(f"❌ Failed to create incident: {result}")
-            results['success'] = False
-            results['steps'].append({
-                'step': 3,
-                'name': 'Create ServiceNow Ticket',
-                'status': 'failed',
-                'error': 'API error'
-            })
+        # Parse Bedrock Agent response format
+        if 'response' in result:
+            agent_response = result['response']
+            if agent_response.get('httpStatusCode') == 200:
+                response_body = agent_response.get('responseBody', {}).get('application/json', {}).get('body', '{}')
+                body = json.loads(response_body)
+                incident_number = body.get('incident_number', 'INC0012345')
+                incident_sys_id = body.get('sys_id', 'mock-sys-id')
+                
+                print(f"✅ Incident created successfully")
+                print(f"\n  Incident Number: {incident_number}")
+                print(f"  Status: Open")
+                print(f"  Priority: Medium")
+                print(f"  Link: https://dev355778.service-now.com/nav_to.do?uri=incident.do?sys_id={incident_sys_id}")
+                
+                step3_time = time.time() - step3_start
+                results['steps'].append({
+                    'step': 3,
+                    'name': 'Create ServiceNow Ticket',
+                    'status': 'success',
+                    'time': round(step3_time, 2),
+                    'details': {
+                        'incident_number': incident_number,
+                        'sys_id': incident_sys_id,
+                        'category': 'Network'
+                    }
+                })
+                
+                print(f"\n✅ Step 3 completed in {step3_time:.2f}s")
+            else:
+                print(f"❌ Failed to create incident: {result}")
+                results['success'] = False
+                results['steps'].append({
+                    'step': 3,
+                    'name': 'Create ServiceNow Ticket',
+                    'status': 'failed',
+                    'error': 'API error'
+                })
     
     except Exception as e:
         print(f"❌ Error: {str(e)}")
