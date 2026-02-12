@@ -1,0 +1,44 @@
+{
+  "test_date": "2026-02-12T23:15:10.592940",
+  "scenario": "VPN troubleshooting and ticket creation",
+  "total_time": 1.3727450370788574,
+  "target_time": 120,
+  "results": {
+    "steps": [
+      {
+        "step": 1,
+        "name": "Query and KB Retrieval",
+        "status": "success",
+        "time": 0.75,
+        "details": {
+          "query": "My VPN isn't working",
+          "kb": "IT",
+          "results_count": 3,
+          "top_score": 0.513,
+          "source": "vpn_setup.txt"
+        }
+      },
+      {
+        "step": 2,
+        "name": "Provide Troubleshooting",
+        "status": "success",
+        "has_citations": true
+      },
+      {
+        "step": 3,
+        "name": "Create ServiceNow Ticket",
+        "status": "failed",
+        "error": "API error"
+      }
+    ],
+    "success": false,
+    "total_time": 1.37,
+    "validation": {
+      "kb_retrieval": true,
+      "has_citations": true,
+      "ticket_created": false,
+      "within_time_limit": true,
+      "all_passed": false
+    }
+  }
+}
