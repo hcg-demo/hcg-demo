@@ -1,0 +1,33 @@
+{
+  "test_date": "2026-02-12T18:57:17.466501",
+  "supervisor_agent_id": "DP6QVL8GPS",
+  "total_tests": 4,
+  "passed": 0,
+  "success_rate": "0.0%",
+  "results": [
+    {
+      "query": "What are the HR benefits?",
+      "expected_agent": "HR",
+      "error": "An error occurred (validationException) when calling the InvokeAgent operation: Invocation of model ID anthropic.claude-3-sonnet-20240229-v1:0 with on-demand throughput isn\u2019t supported. Retry your request with the ID or ARN of an inference profile that contains this model. (Service: BedrockRuntime, Status Code: 400, Request ID: b22d1af9-27fd-44d5-80cc-f56276011cf7) (SDK Attempt Count: 1)",
+      "overall_pass": false
+    },
+    {
+      "query": "My laptop is broken",
+      "expected_agent": "IT",
+      "error": "An error occurred (validationException) when calling the InvokeAgent operation: Invocation of model ID anthropic.claude-3-sonnet-20240229-v1:0 with on-demand throughput isn\u2019t supported. Retry your request with the ID or ARN of an inference profile that contains this model. (Service: BedrockRuntime, Status Code: 400, Request ID: c3f9b60d-a001-4419-9964-6606440ff3d0) (SDK Attempt Count: 1)",
+      "overall_pass": false
+    },
+    {
+      "query": "How do I submit expenses?",
+      "expected_agent": "Finance",
+      "error": "An error occurred (validationException) when calling the InvokeAgent operation: Invocation of model ID anthropic.claude-3-sonnet-20240229-v1:0 with on-demand throughput isn\u2019t supported. Retry your request with the ID or ARN of an inference profile that contains this model. (Service: BedrockRuntime, Status Code: 400, Request ID: 7ab85448-51b3-4c2b-8d2c-9eae38fc68e7) (SDK Attempt Count: 1)",
+      "overall_pass": false
+    },
+    {
+      "query": "Where is the office?",
+      "expected_agent": "General",
+      "error": "An error occurred (validationException) when calling the InvokeAgent operation: Invocation of model ID anthropic.claude-3-sonnet-20240229-v1:0 with on-demand throughput isn\u2019t supported. Retry your request with the ID or ARN of an inference profile that contains this model. (Service: BedrockRuntime, Status Code: 400, Request ID: a8efa887-f327-46a9-9c26-19cbeddbf354) (SDK Attempt Count: 1)",
+      "overall_pass": false
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "test_date": "2026-02-12T19:03:34.103908",
+  "knowledge_bases": {
+    "hr": "H0LFPBHIAK",
+    "it": "X1VW7AMIK8",
+    "finance": "1MFT5GZYTT",
+    "general": "BOLGBDCUAZ"
+  },
+  "total_tests": 6,
+  "passed": 6,
+  "success_rate": "100.0%",
+  "results": [
+    {
+      "query": "What is the parental leave policy?",
+      "kb": "hr",
+      "kb_id": "H0LFPBHIAK",
+      "results_count": 2,
+      "citations": [
+        {
+          "text": "StarHub Leave Policy  Annual Leave - 14-21 days per year based on years of service - Apply at least ...",
+          "score": 0.555,
+          "source": "s3://hcg-demo-knowledge-026138522123/hr-docs/leave_policy.txt"
+        },
+        {
+          "text": "StarHub Employee Benefits  Health Insurance - Comprehensive medical coverage for employee and depend...",
+          "score": 0.436,
+          "source": "s3://hcg-demo-knowledge-026138522123/hr-docs/benefits_guide.txt"
+        }
+      ],
+      "top_score": 0.555,
+      "keywords_found": 6,
+      "keyword_match_rate": 1.0,
+      "faithfulness_ok": false,
+      "has_citations": true,
+      "success": true
+    },
+    {
+      "query": "What health insurance benefits are available?",
+      "kb": "hr",
+      "kb_id": "H0LFPBHIAK",
+      "results_count": 2,
+      "citations": [
+        {
+          "text": "StarHub Employee Benefits  Health Insurance - Comprehensive medical coverage for employee and depend...",
+          "score": 0.547,
+          "source": "s3://hcg-demo-knowledge-026138522123/hr-docs/benefits_guide.txt"
+        },
+        {
+          "text": "StarHub Leave Policy  Annual Leave - 14-21 days per year based on years of service - Apply at least ...",
+          "score": 0.474,
+          "source": "s3://hcg-demo-knowledge-026138522123/hr-docs/leave_policy.txt"
+        }
+      ],
+      "top_score": 0.547,
+      "keywords_found": 5,
+      "keyword_match_rate": 1.0,
+      "faithfulness_ok": false,
+      "has_citations": true,
+      "success": true
+    },
+    {
+      "query": "How do I reset my password?",
+      "kb": "it",
+      "kb_id": "X1VW7AMIK8",
+      "results_count": 4,
+      "citations": [
+        {
+          "text": "StarHub Password Reset Guide  Password Policy - Minimum 12 characters - Must include: uppercase, low...",
+          "score": 0.572,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/password_reset.txt"
+        },
+        {
+          "text": "Login to https://myaccount.starhub.com 3. Security Settings > Set up Authenticator 4. Scan QR code 5...",
+          "score": 0.484,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/vpn_setup.txt"
+        },
+        {
+          "text": "StarHub VPN Setup Guide  VPN Access StarHub uses Cisco AnyConnect VPN for secure remote access.  Ins...",
+          "score": 0.461,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/vpn_setup.txt"
+        },
+        {
+          "text": "StarHub Laptop Troubleshooting Guide  Common Issues and Solutions  Laptop Won't Turn On 1. Check pow...",
+          "score": 0.452,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/laptop_troubleshooting.txt"
+        }
+      ],
+      "top_score": 0.572,
+      "keywords_found": 4,
+      "keyword_match_rate": 1.0,
+      "faithfulness_ok": false,
+      "has_citations": true,
+      "success": true
+    },
+    {
+      "query": "How do I set up VPN access?",
+      "kb": "it",
+      "kb_id": "X1VW7AMIK8",
+      "results_count": 4,
+      "citations": [
+        {
+          "text": "StarHub VPN Setup Guide  VPN Access StarHub uses Cisco AnyConnect VPN for secure remote access.  Ins...",
+          "score": 0.584,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/vpn_setup.txt"
+        },
+        {
+          "text": "Login to https://myaccount.starhub.com 3. Security Settings > Set up Authenticator 4. Scan QR code 5...",
+          "score": 0.506,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/vpn_setup.txt"
+        },
+        {
+          "text": "StarHub Password Reset Guide  Password Policy - Minimum 12 characters - Must include: uppercase, low...",
+          "score": 0.438,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/password_reset.txt"
+        },
+        {
+          "text": "StarHub Laptop Troubleshooting Guide  Common Issues and Solutions  Laptop Won't Turn On 1. Check pow...",
+          "score": 0.413,
+          "source": "s3://hcg-demo-knowledge-026138522123/it-docs/laptop_troubleshooting.txt"
+        }
+      ],
+      "top_score": 0.584,
+      "keywords_found": 5,
+      "keyword_match_rate": 1.0,
+      "faithfulness_ok": false,
+      "has_citations": true,
+      "success": true
+    },
+    {
+      "query": "How do I submit an expense report?",
+      "kb": "finance",
+      "kb_id": "1MFT5GZYTT",
+      "results_count": 5,
+      "citations": [
+        {
+          "text": "account  Receipt Requirements Must include: - Merchant name and address - Date of transaction - Item...",
+          "score": 0.512,
+          "source": "s3://hcg-demo-knowledge-026138522123/finance-docs/expense_policy.txt"
+        },
+        {
+          "text": "StarHub Expense Reimbursement Policy  Eligible Expenses  Travel - Public transport (MRT, bus, taxi) ...",
+          "score": 0.487,
+          "source": "s3://hcg-demo-knowledge-026138522123/finance-docs/expense_policy.txt"
+        },
+        {
+          "text": "Verify goods/services on receipt 7. Vendor submits invoice, payment within 30 days  Approved Vendors...",
+          "score": 0.469,
+          "source": "s3://hcg-demo-knowledge-026138522123/finance-docs/procurement_policy.txt"
+        },
+        {
+          "text": "cities  Client Entertainment Pre-approval for over $500 Documentation: - Attendee list (name, compan...",
+          "score": 0.458,
+          "source": "s3://hcg-demo-knowledge-026138522123/finance-docs/expense_policy.txt"
+        },
+        {
+          "text": "StarHub Procurement Policy  Procurement Authority Levels  Level 1: Up to $1,000 - Manager approval r...",
+          "score": 0.434,
+          "source": "s3://hcg-demo-knowledge-026138522123/finance-docs/procurement_policy.txt"
+        }
+      ],
+      "top_score": 0.512,
+      "keywords_found": 4,
+      "keyword_match_rate": 1.0,
+      "faithfulness_ok": false,
+      "has_citations": true,
+      "success": true
+    },
+    {
+      "query": "Where is the Singapore office located?",
+      "kb": "general",
+      "kb_id": "BOLGBDCUAZ",
+      "results_count": 4,
+      "citations": [
+        {
+          "text": "StarHub Office Locations  Headquarters StarHub Centre 51 Cuppage Road Singapore 229469 Phone: +65 68...",
+          "score": 0.536,
+          "source": "s3://hcg-demo-knowledge-026138522123/general-docs/office_locations.txt"
+        },
+        {
+          "text": "Q: How do I install software? A: Use Software Center or submit request via IT portal.  Q: Can I use ...",
+          "score": 0.422,
+          "source": "s3://hcg-demo-knowledge-026138522123/general-docs/employee_faq.txt"
+        },
+        {
+          "text": "StarHub Employee FAQs  General Questions  Q: What are the office hours? A: Monday-Friday 9:00 AM - 6...",
+          "score": 0.417,
+          "source": "s3://hcg-demo-knowledge-026138522123/general-docs/employee_faq.txt"
+        },
+        {
+          "text": "StarHub Company Policies  Work Hours - Standard hours: Monday-Friday, 9:00 AM - 6:00 PM - Core hours...",
+          "score": 0.405,
+          "source": "s3://hcg-demo-knowledge-026138522123/general-docs/company_policies.txt"
+        }
+      ],
+      "top_score": 0.536,
+      "keywords_found": 3,
+      "keyword_match_rate": 0.75,
+      "faithfulness_ok": false,
+      "has_citations": true,
+      "success": true
+    }
+  ]
+}
