@@ -1,0 +1,26 @@
+# IT Support Guide
+
+## Password Reset
+To reset your password:
+1. Go to https://password.company.com
+2. Click "Forgot Password"
+3. Enter your employee ID
+4. Follow the email instructions
+5. Your new password must be at least 12 characters with uppercase, lowercase, numbers, and symbols
+
+## VPN Access
+1. Download Cisco AnyConnect from IT Portal
+2. Install the application
+3. Connect to vpn.company.com
+4. Use your AD credentials
+5. Enable 2FA with your mobile device
+
+## Laptop Issues
+For hardware issues:
+- Email: itsupport@company.com
+- Call: +65 6123 4567
+- ServiceNow: Create incident ticket
+- Response time: 4 hours for critical issues
+
+## Software Installation
+All software requests must go through ServiceNow approval process.

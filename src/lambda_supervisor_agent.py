@@ -1,73 +1,95 @@
 import json
 import boto3
-import re
 
 bedrock_agent_runtime = boto3.client('bedrock-agent-runtime', region_name='ap-southeast-1')
+lambda_client = boto3.client('lambda', region_name='ap-southeast-1')
 
-# Import safe failure handler
-import sys
-sys.path.append('/opt/python')
-
-try:
-    from safe_failure_handler import (
-        validate_response,
-        calculate_kb_confidence,
-        get_fallback_response
-    )
-except ImportError:
-    # Inline minimal version if import fails
-    def validate_response(response, citations, query_confidence, domain):
-        kb_confidence = len(citations) / 5.0 if citations else 0.0
-        combined = (kb_confidence + query_confidence) / 2
-        
-        if combined < 0.6:
-            return {
-                'safe_to_respond': False,
-                'response': f"I don't have enough information to answer that confidently. Please contact the {domain.upper()} team directly.",
-                'confidence': combined,
-                'confidence_level': 'low'
-            }
-        
-        return {
-            'safe_to_respond': True,
-            'response': response,
-            'confidence': combined,
-            'confidence_level': 'high' if combined > 0.8 else 'medium'
-        }
-
-# Agent configurations
+# Agent configurations - use TSTALIASID or update with aliases from: aws bedrock-agent list-agent-aliases --agent-id <ID>
 AGENTS = {
-    'hr': {'id': 'IEVMSZT1GY', 'alias': 'VFYW9OV9IU'},
-    'it': {'id': 'ZMLHZEZZXO', 'alias': 'BFBSNUNZUA'},
-    'finance': {'id': '8H5G4JZVXM', 'alias': '1ZFUCWCS1K'},
-    'general': {'id': 'RY3QRSI7VE', 'alias': '9CP8PGSKFQ'}
+    'hr': {'id': 'GDR3BCGCZM', 'alias': 'TSTALIASID', 'kb': 'H0LFPBHIAK'},
+    'it': {'id': 'ZMLHZEZZXO', 'alias': 'TSTALIASID', 'kb': 'X1VW7AMIK8'},
+    'finance': {'id': '8H5G4JZVXM', 'alias': 'TSTALIASID', 'kb': '1MFT5GZYTT'},
+    'general': {'id': 'RY3QRSI7VE', 'alias': 'TSTALIASID', 'kb': 'BOLGBDCUAZ'}
 }
+
+def _sanitize_for_api(text):
+    """Normalize text for safe API handling (smart quotes, Unicode, etc.)"""
+    if not text or not isinstance(text, str):
+        return str(text or "")
+    for old, new in [('\u2018', "'"), ('\u2019', "'"), ('\u201c', '"'), ('\u201d', '"'), ('\u00a0', ' ')]:
+        text = text.replace(old, new)
+    return text.strip()
+
+
+def is_ticket_request(query):
+    """Check if query is requesting ticket creation"""
+    query_lower = query.lower()
+    ticket_keywords = [
+        'create ticket', 'create a ticket', 'crate ticket', 'crate a ticket',  # incl. typo
+        'open ticket', 'open a ticket', 'raise ticket', 'log ticket', 'log a ticket',
+        'submit ticket', 'submit a ticket', 'need help', 'urgent', 'please help',
+        'need a software', 'need software'  # software request = ticket
+    ]
+    return any(kw in query_lower for kw in ticket_keywords)
+
+def create_servicenow_ticket(description):
+    """Create ServiceNow ticket via Lambda (supports both direct and Bedrock Action Group formats)"""
+    try:
+        response = lambda_client.invoke(
+            FunctionName='hcg-demo-servicenow-action',
+            InvocationType='RequestResponse',
+            Payload=json.dumps({
+                'actionGroup': 'ServiceNowActions',
+                'apiPath': '/create_incident',
+                'parameters': [
+                    {'name': 'short_description', 'value': description[:100]},
+                    {'name': 'description', 'value': description}
+                ]
+            })
+        )
+        result = json.loads(response['Payload'].read())
+        # Lambda returns Bedrock Action Group format: {response: {responseBody: {TEXT: {body: ...}}}}
+        resp = result.get('response', {})
+        if resp.get('httpStatusCode') == 200:
+            body_obj = resp.get('responseBody', {})
+            # Support both TEXT and application/json formats
+            text_body = body_obj.get('TEXT', {}).get('body') or body_obj.get('application/json', {}).get('body', '')
+            if isinstance(text_body, dict):
+                ticket_num = text_body.get('incident_number') or text_body.get('ticket_number') or 'N/A'
+            else:
+                # TEXT body is string like "✅ Incident created: INC0010001"
+                ticket_num = str(text_body).split(':')[-1].strip() if text_body else 'N/A'
+            return f"✓ Ticket created successfully! Ticket Number: {ticket_num}. Our IT team will contact you shortly."
+        else:
+            err_body = resp.get('responseBody', {}).get('TEXT', {}).get('body', '')
+            print(f"ServiceNow returned error: {err_body}")
+            return "I've noted your issue. Please contact IT Support at itsupport@starhub.com or +65 6825 3000."
+    except Exception as e:
+        print(f"ServiceNow error: {e}")
+        return "I've noted your issue. Please contact IT Support at itsupport@starhub.com or +65 6825 3000."
 
 def classify_query(query):
     """Classify user query to appropriate domain"""
     query_lower = query.lower()
     
-    # HR keywords
-    hr_keywords = ['leave', 'vacation', 'maternity', 'paternity', 'benefit', 'insurance', 'medical', 'salary', 'bonus', 'hr', 'employee', 'onboarding']
+    hr_keywords = ['leave', 'vacation', 'holiday', 'holidays', 'maternity', 'paternity', 'benefit', 'insurance', 'medical', 'salary', 'bonus', 'hr', 'employee', 'onboarding']
     if any(kw in query_lower for kw in hr_keywords):
         return 'hr', 0.9
     
-    # IT keywords
-    it_keywords = ['password', 'laptop', 'vpn', 'software', 'install', 'computer', 'network', 'login', 'access', 'it support', 'troubleshoot']
+    it_keywords = ['password', 'laptop', 'vpn', 'software', 'install', 'computer', 'network', 'login', 'access', 'it support', 'troubleshoot', 'reset', 'ticket', 'create ticket', 'incident', 'issue', 'problem', 'help']
     if any(kw in query_lower for kw in it_keywords):
         return 'it', 0.9
     
-    # Finance keywords
     finance_keywords = ['expense', 'reimbursement', 'procurement', 'purchase', 'invoice', 'payment', 'budget', 'finance', 'cost']
     if any(kw in query_lower for kw in finance_keywords):
         return 'finance', 0.9
     
-    # Default to general
     return 'general', 0.7
 
-def invoke_agent(agent_id, query, session_id, alias_id='TSTALIASID'):
-    """Invoke specialist agent"""
+def invoke_agent_with_fallback(agent_id, alias_id, kb_id, query, session_id):
+    """Try agent first, fallback to direct KB retrieval"""
     try:
+        # Try agent
         response = bedrock_agent_runtime.invoke_agent(
             agentId=agent_id,
             agentAliasId=alias_id,
@@ -75,89 +97,95 @@ def invoke_agent(agent_id, query, session_id, alias_id='TSTALIASID'):
             inputText=query
         )
         
-        # Extract response
         completion = ""
-        citations = []
-        
         for event in response['completion']:
-            if 'chunk' in event:
-                chunk = event['chunk']
-                if 'bytes' in chunk:
-                    completion += chunk['bytes'].decode('utf-8')
-            
-            if 'trace' in event:
-                trace = event['trace'].get('trace', {})
-                if 'orchestrationTrace' in trace:
-                    orch = trace['orchestrationTrace']
-                    if 'observation' in orch:
-                        obs = orch['observation']
-                        if 'knowledgeBaseLookupOutput' in obs:
-                            kb_output = obs['knowledgeBaseLookupOutput']
-                            if 'retrievedReferences' in kb_output:
-                                citations.extend(kb_output['retrievedReferences'])
+            if 'chunk' in event and 'bytes' in event['chunk']:
+                completion += event['chunk']['bytes'].decode('utf-8')
         
-        return {
-            'response': completion,
-            'citations': citations,
-            'confidence': 0.9
-        }
-        
+        if completion:
+            return {'response': completion, 'score': 0.9, 'source': 'agent'}
     except Exception as e:
-        return {
-            'response': f"Error invoking agent: {str(e)}",
-            'citations': [],
-            'confidence': 0.0
-        }
+        print(f"Agent failed: {e}, falling back to KB")
+    
+    # Fallback to direct KB retrieval
+    try:
+        response = bedrock_agent_runtime.retrieve(
+            knowledgeBaseId=kb_id,
+            retrievalQuery={'text': query}
+        )
+        
+        if response['retrievalResults']:
+            top_result = response['retrievalResults'][0]
+            return {
+                'response': top_result['content']['text'],
+                'score': top_result['score'],
+                'source': 'kb_direct'
+            }
+    except Exception as e:
+        print(f"KB retrieval failed: {e}")
+    
+    return None
 
 def lambda_handler(event, context):
-    """Supervisor agent - routes queries to specialists"""
-    
     try:
-        # Parse input
         body = json.loads(event.get('body', '{}'))
         query = body.get('query', '')
         session_id = body.get('session_id', 'default-session')
         
         if not query:
+            return {'statusCode': 400, 'body': json.dumps({'error': 'Query is required'})}
+        
+        # Check if this is a ticket creation request
+        if is_ticket_request(query):
+            ticket_response = create_servicenow_ticket(_sanitize_for_api(query))
             return {
-                'statusCode': 400,
-                'body': json.dumps({'error': 'Query is required'})
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps({
+                    'query': query,
+                    'domain': 'it',
+                    'confidence': 1.0,
+                    'confidence_level': 'high',
+                    'safe_to_respond': True,
+                    'response': ticket_response,
+                    'source': 'servicenow',
+                    'citations': []
+                })
             }
         
-        # Classify query
         domain, confidence = classify_query(query)
         agent_config = AGENTS[domain]
-        agent_id = agent_config['id']
-        alias_id = agent_config['alias']
         
-        # Invoke specialist agent
-        result = invoke_agent(agent_id, query, session_id, alias_id)
-        
-        # Validate response with safe failure handling
-        validation = validate_response(
-            result['response'],
-            result['citations'],
-            confidence,
-            domain
+        result = invoke_agent_with_fallback(
+            agent_config['id'],
+            agent_config['alias'],
+            agent_config['kb'],
+            query,
+            session_id
         )
         
-        # Format response with validation results
-        response_data = {
-            'query': query,
-            'domain': domain,
-            'agent_id': agent_id,
-            'confidence': validation['confidence'],
-            'confidence_level': validation['confidence_level'],
-            'safe_to_respond': validation['safe_to_respond'],
-            'response': validation['response'],
-            'citations': [
-                {
-                    'content': c.get('content', {}).get('text', ''),
-                    'location': c.get('location', {}).get('s3Location', {}).get('uri', '')
-                }
-                for c in result['citations']
-            ] if validation['safe_to_respond'] else []
-        }
+        if result and result['score'] > 0.5:
+            response_data = {
+                'query': query,
+                'domain': domain,
+                'confidence': result['score'],
+                'confidence_level': 'high' if result['score'] > 0.7 else 'medium',
+                'safe_to_respond': True,
+                'response': result['response'],
+                'source': result['source'],
+                'citations': []
+            }
+        else:
+            response_data = {
+                'query': query,
+                'domain': domain,
+                'confidence': 0.3,
+                'confidence_level': 'low',
+                'safe_to_respond': False,
+                'response': f"I don't have enough information to answer that confidently. Please contact the {domain.upper()} team directly.",
+                'source': 'fallback',
+                'citations': []
+            }
         
         return {
             'statusCode': 200,
@@ -166,7 +194,4 @@ def lambda_handler(event, context):
         }
         
     except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
-        }
+        return {'statusCode': 500, 'body': json.dumps({'error': str(e)})}

@@ -1,54 +1,58 @@
+"""
+Update ServiceNow credentials in SSM Parameter Store.
+Run: python infra/setup_servicenow.py
+"""
 import boto3
 import json
+import getpass
 
 ssm = boto3.client('ssm', region_name='ap-southeast-1')
 
-print("="*70)
-print("SERVICENOW INSTANCE CONFIGURATION")
-print("="*70)
+print("=" * 70)
+print("SERVICENOW CREDENTIALS - SSM Parameter Store")
+print("=" * 70)
 
-instance_url = "https://dev355778.service-now.com"
-username = "Panpratik07@gmail.com"
-password = "rpt9uJ3!UKVf7zJ"
+instance_url = input("\nInstance URL (e.g. https://dev355778.service-now.com): ").strip()
+if not instance_url:
+    print("❌ Instance URL required")
+    exit(1)
+if not instance_url.startswith("http"):
+    instance_url = "https://" + instance_url
 
-print(f"\nInstance: {instance_url}")
-print(f"Username: {username}")
-print("\nStoring credentials in AWS Systems Manager Parameter Store...")
+username = input("Username (ServiceNow login or API user): ").strip()
+if not username:
+    print("❌ Username required")
+    exit(1)
 
+password = getpass.getpass("Password: ")
+if not password:
+    print("❌ Password required")
+    exit(1)
+
+print(f"\nStoring in SSM...")
 try:
     ssm.put_parameter(
         Name='/hcg-demo/servicenow/instance-url',
-        Value=instance_url,
+        Value=instance_url.rstrip('/'),
         Type='String',
         Overwrite=True
     )
-    print("✅ Stored: instance-url")
-    
+    print("✅ /hcg-demo/servicenow/instance-url")
     ssm.put_parameter(
         Name='/hcg-demo/servicenow/username',
         Value=username,
         Type='String',
         Overwrite=True
     )
-    print("✅ Stored: username")
-    
+    print("✅ /hcg-demo/servicenow/username")
     ssm.put_parameter(
         Name='/hcg-demo/servicenow/password',
         Value=password,
         Type='SecureString',
         Overwrite=True
     )
-    print("✅ Stored: password (encrypted)")
-    
-    with open('servicenow_config.json', 'w') as f:
-        json.dump({
-            'instance_url': instance_url,
-            'username': username,
-            'configured_at': '2025-02-12'
-        }, f, indent=2)
-    
-    print("\n✅ Configuration complete!")
-    
+    print("✅ /hcg-demo/servicenow/password (encrypted)")
+    print("\n✅ Done. Try @hcg_demo Create a ticket: My laptop won't boot")
 except Exception as e:
-    print(f"❌ Error: {str(e)}")
+    print(f"❌ Error: {e}")
     exit(1)

@@ -18,29 +18,50 @@ def get_signing_secret():
     return cached_secret
 
 def lambda_handler(event, context):
-    timestamp = event['headers'].get('x-slack-request-timestamp', '')
-    signature = event['headers'].get('x-slack-signature', '')
-    body = event['body']
-    
-    # Check timestamp (5-minute window)
-    now = int(time.time())
-    if abs(now - int(timestamp)) > 300:
+    try:
+        headers = event.get('headers') or {}
+        # API Gateway may lowercase headers
+        headers_lower = {k.lower(): v for k, v in headers.items()}
+        timestamp = headers_lower.get('x-slack-request-timestamp', '') or ''
+        signature = headers_lower.get('x-slack-signature', '') or ''
+        body = event.get('body') or ''
+        
+        # Allow url_verification (Slack setup) - must pass before Events work
+        if body and 'url_verification' in body:
+            return generate_policy('Allow', event['methodArn'])
+        
+        if not timestamp or not signature:
+            return generate_policy('Deny', event['methodArn'])
+        
+        # Check timestamp (5-minute window)
+        try:
+            ts = int(timestamp)
+        except (ValueError, TypeError):
+            return generate_policy('Deny', event['methodArn'])
+        now = int(time.time())
+        if abs(now - ts) > 300:
+            return generate_policy('Deny', event['methodArn'])
+        
+        # Calculate expected signature
+        secrets = get_signing_secret()
+        signing_secret = secrets.get('SLACK_SIGNING_SECRET') or secrets.get('signing_secret')
+        if not signing_secret:
+            return generate_policy('Deny', event['methodArn'])
+        
+        sig_basestring = f"v0:{timestamp}:{body}"
+        expected_sig = 'v0=' + hmac.new(
+            signing_secret.encode() if isinstance(signing_secret, str) else str(signing_secret).encode(),
+            sig_basestring.encode(),
+            hashlib.sha256
+        ).hexdigest()
+        
+        # Constant-time comparison
+        if hmac.compare_digest(signature, expected_sig):
+            return generate_policy('Allow', event['methodArn'])
+        
         return generate_policy('Deny', event['methodArn'])
-    
-    # Calculate expected signature
-    secrets = get_signing_secret()
-    sig_basestring = f"v0:{timestamp}:{body}"
-    expected_sig = 'v0=' + hmac.new(
-        secrets['SLACK_SIGNING_SECRET'].encode(),
-        sig_basestring.encode(),
-        hashlib.sha256
-    ).hexdigest()
-    
-    # Constant-time comparison
-    if hmac.compare_digest(signature, expected_sig):
-        return generate_policy('Allow', event['methodArn'])
-    
-    return generate_policy('Deny', event['methodArn'])
+    except Exception as e:
+        return generate_policy('Deny', event['methodArn'])
 
 def generate_policy(effect, resource):
     return {

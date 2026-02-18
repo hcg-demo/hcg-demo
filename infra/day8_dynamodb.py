@@ -22,6 +22,12 @@ tables = [
         'attrs': [{'AttributeName': 'feedbackId', 'AttributeType': 'S'}, {'AttributeName': 'timestamp', 'AttributeType': 'S'},
                   {'AttributeName': 'sessionId', 'AttributeType': 'S'}],
         'gsi': {'IndexName': 'session-index', 'Keys': [{'AttributeName': 'sessionId', 'KeyType': 'HASH'}, {'AttributeName': 'timestamp', 'KeyType': 'RANGE'}]}
+    },
+    {
+        'name': 'hcg-demo-processed-events',
+        'key': [{'AttributeName': 'eventId', 'KeyType': 'HASH'}],
+        'attrs': [{'AttributeName': 'eventId', 'AttributeType': 'S'}, {'AttributeName': 'ttl', 'AttributeType': 'N'}],
+        'ttl': True
     }
 ]
 
@@ -49,11 +55,12 @@ for table_config in tables:
         waiter = dynamodb.get_waiter('table_exists')
         waiter.wait(TableName=table_config['name'])
         
-        # Enable TTL
-        dynamodb.update_time_to_live(
-            TableName=table_config['name'],
-            TimeToLiveSpecification={'Enabled': True, 'AttributeName': 'ttl'}
-        )
+        # Enable TTL for tables that support it
+        if table_config.get('ttl', True):
+            dynamodb.update_time_to_live(
+                TableName=table_config['name'],
+                TimeToLiveSpecification={'Enabled': True, 'AttributeName': 'ttl'}
+            )
         print(f"✓ Created table: {table_config['name']}")
 
 print("\n=== CONSOLIDATED SUMMARY ===")
@@ -64,4 +71,5 @@ print("✅ Day 8: DynamoDB Tables")
 print("  - hcg-demo-sessions")
 print("  - hcg-demo-users (with email-index)")
 print("  - hcg-demo-feedback (with session-index)")
+print("  - hcg-demo-processed-events (Slack idempotency)")
 print("✅ Secrets Manager: 2 secrets")

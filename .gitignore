@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.so
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/settings.json
+
+# Build / temp
+*.zip
+*.egg-info/
+dist/
+build/
+
+# Test outputs
+test_result.json
+servicenow_config.json
+
+# Secrets / local
+.env
+.env.local
+*.pem
+
+# Misc
+8v3gmC
+*.log
+.DS_Store

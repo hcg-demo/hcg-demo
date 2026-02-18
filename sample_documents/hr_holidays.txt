@@ -1,0 +1,24 @@
+# Company Holidays 2025
+
+## Public Holidays
+- New Year's Day: January 1, 2025
+- Chinese New Year: January 29-30, 2025
+- Good Friday: April 18, 2025
+- Labour Day: May 1, 2025
+- Vesak Day: May 12, 2025
+- Hari Raya Puasa: March 31, 2025
+- National Day: August 9, 2025
+- Deepavali: October 20, 2025
+- Christmas Day: December 25, 2025
+
+## Leave Policy
+- Annual Leave: 14 days per year
+- Medical Leave: 14 days per year
+- Maternity Leave: 16 weeks
+- Paternity Leave: 2 weeks
+
+## How to Apply for Leave
+1. Log into Workday
+2. Go to Time Off section
+3. Select leave type and dates
+4. Submit for manager approval
