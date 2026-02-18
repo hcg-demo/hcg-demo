@@ -1,5 +1,8 @@
 # Repository Structure
 
+**Single repo**: Local folder `C:\Users\ppandya\Git_DB_Cursor\desktop-tutorial-1` ↔ GitHub [hcg-demo/hcg-demo](https://github.com/hcg-demo/hcg-demo).  
+See [REPO_SETUP.md](REPO_SETUP.md) for details.
+
 ```
 .github/
   workflows/          # CI/CD pipelines
