@@ -38,7 +38,7 @@
 |----|-------|
 | Deploy in order: infra → Lambdas → config | Skip dependencies (e.g. DynamoDB, IAM) |
 | Wait 15–20 seconds before re-running config updates | Retry immediately after code deploy |
-| Run `infra/add_servicenow_ssm_permission.py` if using SSM | Forget SSM permissions for ServiceNow Lambda |
+| Run `scripts/infra/add_servicenow_ssm_permission.py` if using SSM | Forget SSM permissions for ServiceNow Lambda |
 | Use `deploy_all_slack_fixes.py` for a full deploy | Deploy only some components |
 
 ## Secrets & Credentials

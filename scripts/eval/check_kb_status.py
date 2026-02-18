@@ -21,7 +21,7 @@ print("1️⃣ LOCAL DOCUMENTS")
 print("-"*70)
 total_docs = 0
 for domain in ['hr', 'it', 'finance', 'general']:
-    folder = Path(f'sample_documents/{domain}')
+    folder = Path(f'Sample Data/{domain}')
     count = len(list(folder.glob('*.txt')))
     total_docs += count
     print(f"   {domain.upper()}: {count} documents")

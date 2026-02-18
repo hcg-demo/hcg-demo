@@ -82,7 +82,7 @@ Setup and integration lessons from Slack + ServiceNow + Bedrock KB implementatio
 - Retry config updates after code deploy; `ResourceConflictException` means Lambda is still updating.
 
 ### Credentials
-- Run `python infra/setup_servicenow.py` for interactive SSM setup.
+- Run `python scripts/infra/setup_servicenow.py` for interactive SSM setup.
 - Or update Secrets Manager `hcg-demo/servicenow/creds` directly.
 
 ---

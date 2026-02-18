@@ -1,0 +1,3 @@
+{
+  "body": "{\"type\": \"event_callback\", \"event_id\": \"EvTestLaptop123\", \"event\": {\"type\": \"app_mention\", \"user\": \"U123\", \"text\": \"<@BOT123> Create a ticket: My laptop won't boot up\", \"ts\": \"1234567890.123\", \"channel\": \"C123\", \"channel_type\": \"channel\"}}"
+}

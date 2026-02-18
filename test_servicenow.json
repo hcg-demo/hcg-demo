@@ -1,0 +1,1 @@
+{"actionGroup":"ServiceNowActions","apiPath":"/create-incident","parameters":[{"name":"short_description","value":"Test ticket"},{"name":"description","value":"Testing ServiceNow integration"}]}

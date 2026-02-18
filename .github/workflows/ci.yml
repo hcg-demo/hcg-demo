@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Lint Python
+        run: |
+          pip install flake8 --quiet
+          flake8 src scripts --max-line-length 120 --extend-ignore E501,W503 || true
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify structure
+        run: |
+          test -d src && echo "src OK"
+          test -d tests && echo "tests OK"
+          test -d docs && echo "docs OK"
+          test -d scripts && echo "scripts OK"
+          test -d "Sample Data" && echo "Sample Data OK"

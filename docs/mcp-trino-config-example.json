@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "awslabs.aws-api-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-api-mcp-server@latest"],
+      "timeout": 120000,
+      "env": {
+        "AWS_PROFILE": "default",
+        "AWS_REGION": "ap-southeast-1",
+        "AWS_API_MCP_PROFILE_NAME": "default"
+      }
+    },
+    "trino": {
+      "command": "C:\\Users\\ppandya\\Git_DB_Cursor\\desktop-tutorial-1\\.mcp-tools\\mcp-trino.exe",
+      "args": [],
+      "timeout": 60000,
+      "env": {
+        "TRINO_HOST": "localhost",
+        "TRINO_PORT": "8080",
+        "TRINO_USER": "trino",
+        "TRINO_SCHEME": "http",
+        "TRINO_CATALOG": "delta_lake",
+        "TRINO_SCHEMA": "default",
+        "TRINO_QUERY_TIMEOUT": "60",
+        "TRINO_ALLOW_WRITE_QUERIES": "false"
+      }
+    }
+  }
+}
