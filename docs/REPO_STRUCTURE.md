@@ -6,9 +6,12 @@
     ci.yml            # Lint, structure validation
 
 docs/                 # Documentation
-  LESSONS_LEARNED.md
+  ARCHITECTURE.md           # HCG Demo (Slack, Bedrock, ServiceNow)
+  ARCHITECTURE_MULTITENANT.md  # Multi-tenant Aurora + Lambda API
+  LESSONS_LEARNED.md        # Slack/ServiceNow
+  LESSONS_LEARNED_MULTITENANT.md
   DOS_AND_DONTS.md
-  ARCHITECTURE.md
+  DOS_AND_DONTS_MULTITENANT.md
   ...
 
 gates/                # Quality gates, pre-deploy validation

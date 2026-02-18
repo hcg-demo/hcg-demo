@@ -268,6 +268,14 @@
 - **Deep Linking Success**: 87.5%
 - **Query Coverage**: 100% (informational 35% + redirectional 65%)
 
+## Other Architectures
+
+| Architecture | Description | Doc |
+|--------------|-------------|-----|
+| **Multi-Tenant API** | Python Flask + Lambda + Aurora Serverless, per-tenant schemas, SAM | [ARCHITECTURE_MULTITENANT.md](ARCHITECTURE_MULTITENANT.md) |
+
+---
+
 ## Technology Stack
 
 - **LLM**: Claude 3 Sonnet (agents), Claude 3 Haiku (evaluation)
